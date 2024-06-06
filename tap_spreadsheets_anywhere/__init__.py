@@ -18,15 +18,17 @@ def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 def append_env_to_tables(table_spec):
-    table_spec['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')
-    table_spec['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME')
-    table_spec['tables'][0]['format'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_FORMAT')
-    table_spec['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN')
-    table_spec['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR')
-    table_spec['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE')
-    table_spec['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', [])
+    config = copy.deepcopy(table_spec)
+    
+    config['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')
+    config['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME')
+    config['tables'][0]['format'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_FORMAT')
+    config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN')
+    config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR')
+    config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE')
+    config['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', [])
 
-    return table_spec
+    return config
 
 def merge_dicts(first, second):
     to_return = first.copy()
@@ -153,9 +155,7 @@ def main():
         LOGGER.info(f"Writing expanded crawl blocks to {crawl_results_file}.")
         Config.dump(tables_config, open(crawl_results_file, "w"))
     else:
-        LOGGER.info(f"TAP_SPREADSHEET_ANYWHERE_PATH: {os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')}")
         tables_config = append_env_to_tables(args.config)
-        #LOGGER.info(f"TABLES CONFIG: {tables_config}")
     
     tables_config = Config.validate(tables_config)
     # If discover flag was passed, run discovery mode and dump output to stdout
