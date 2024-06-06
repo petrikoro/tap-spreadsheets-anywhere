@@ -151,7 +151,7 @@ def main():
         tables_config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR')
         tables_config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE')
         tables_config['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', [])
-
+    LOGGER.info(f"TABLES CONFIG: {tables_config}")
     tables_config = Config.validate(tables_config)
     # If discover flag was passed, run discovery mode and dump output to stdout
     if args.discover:
