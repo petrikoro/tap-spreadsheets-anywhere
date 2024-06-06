@@ -146,6 +146,7 @@ def main():
         tables_config = args.config
 
     tables_config = Config.validate(tables_config)
+    LOGGER.info(f"TABLES CONFIG {tables_config}.")
     # If discover flag was passed, run discovery mode and dump output to stdout
     if args.discover:
         catalog = discover(tables_config)
