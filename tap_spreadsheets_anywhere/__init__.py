@@ -18,6 +18,7 @@ LOGGER = logging.getLogger(__name__)
 parser = argparse.ArgumentParser()
 parser.add_argument("--select")
 parser.add_argument("--discover")
+parser.add_argument("--config")
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
