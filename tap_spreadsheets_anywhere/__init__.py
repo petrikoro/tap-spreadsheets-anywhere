@@ -144,9 +144,15 @@ def main():
         Config.dump(tables_config, open(crawl_results_file, "w"))
     else:
         tables_config = args.config
+        tables_config['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')
+        tables_config['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME')
+        tables_config['tables'][0]['format'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_FORMAT')
+        tables_config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN')
+        tables_config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR')
+        tables_config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE')
+        tables_config['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', [])
 
     tables_config = Config.validate(tables_config)
-    LOGGER.info(f"TABLES CONFIG {tables_config}.")
     # If discover flag was passed, run discovery mode and dump output to stdout
     if args.discover:
         catalog = discover(tables_config)
