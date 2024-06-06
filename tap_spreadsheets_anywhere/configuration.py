@@ -7,12 +7,12 @@ LOGGER = logging.getLogger(__name__)
 
 CONFIG_CONTRACT = Schema({
     Required('tables'): [{
-        Required('path'): str,
-        Required('name'): str,
-        Required('pattern'): str,
-        Required('start_date'): str,
-        Required('key_properties'): [str],
-        Required('format'): Any('csv', 'excel', 'json', 'jsonl', 'parquet', 'detect'),
+        Optional('path'): str,
+        Optional('name'): str,
+        Optional('pattern'): str,
+        Optional('start_date'): str,
+        Optional('key_properties'): [str],
+        Optional('format'): Any('csv', 'excel', 'json', 'jsonl', 'parquet', 'detect'),
         Optional('encoding'): str,
         Optional('invalid_format_action'): Any('ignore','fail'),
         Optional('universal_newlines'): bool,
