@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import logging
+import argparse
 
 import dateutil
 import singer
@@ -13,6 +14,9 @@ import tap_spreadsheets_anywhere.conversion as conversion
 import tap_spreadsheets_anywhere.file_utils as file_utils
 
 LOGGER = logging.getLogger(__name__)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--select")
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
@@ -58,6 +62,8 @@ def generate_schema(table_spec, samples):
     return Schema.from_dict(merged_schema)
 
 def discover(config):
+    args = parser.parse_args()
+    args.select
     streams = []
     for table_spec in config['tables']:
         try:
@@ -71,22 +77,24 @@ def discover(config):
             schema = generate_schema(table_spec, samples)
             stream_metadata = []
             key_properties = table_spec.get('key_properties', [])
-            streams.append(
-                CatalogEntry(
-                    tap_stream_id=table_spec['name'],
-                    stream=table_spec['name'],
-                    schema=schema,
-                    key_properties=key_properties,
-                    metadata=stream_metadata,
-                    replication_key=None,
-                    is_view=None,
-                    database=None,
-                    table=None,
-                    row_count=None,
-                    stream_alias=None,
-                    replication_method=None,
+            
+            if args.select is not None and args.select == table_spec['name']:
+                streams.append(
+                    CatalogEntry(
+                        tap_stream_id=table_spec['name'],
+                        stream=table_spec['name'],
+                        schema=schema,
+                        key_properties=key_properties,
+                        metadata=stream_metadata,
+                        replication_key=None,
+                        is_view=None,
+                        database=None,
+                        table=None,
+                        row_count=None,
+                        stream_alias=None,
+                        replication_method=None,
+                    )
                 )
-            )
         except Exception as err:
             LOGGER.error(f"Unable to write Catalog entry for '{table_spec['name']}' - it will be skipped due to error {err}")
             raise err
