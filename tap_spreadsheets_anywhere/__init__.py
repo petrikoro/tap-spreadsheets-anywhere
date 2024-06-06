@@ -20,13 +20,13 @@ def get_abs_path(path):
 def append_env_to_tables(table_spec):
     config = copy.deepcopy(table_spec)
     
-    config['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')
-    config['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME')
-    config['tables'][0]['format'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_FORMAT')
-    config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN')
-    config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR')
-    config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE')
-    config['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', [])
+    config['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH', config['tables'][0]['path'])
+    config['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME', config['tables'][0]['name'])
+    config['tables'][0]['format'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_FORMAT', config['tables'][0]['format'])
+    config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN', config['tables'][0]['pattern'])
+    config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR', config['tables'][0]['quotechar'])
+    config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE', config['tables'][0]['start_date'])
+    config['tables'][0]['key_properties'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES', config['tables'][0]['key_properties'])
 
     return config
 
