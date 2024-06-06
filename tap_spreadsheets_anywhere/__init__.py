@@ -153,9 +153,9 @@ def main():
         LOGGER.info(f"Writing expanded crawl blocks to {crawl_results_file}.")
         Config.dump(tables_config, open(crawl_results_file, "w"))
     else:
-        tables_config = append_env_to_tables(args.config)
-        LOGGER.info(f"TABLES CONFIG: {tables_config}")
         LOGGER.info(f"TAP_SPREADSHEET_ANYWHERE_PATH: {os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH')}")
+        tables_config = append_env_to_tables(args.config)
+        #LOGGER.info(f"TABLES CONFIG: {tables_config}")
     
     tables_config = Config.validate(tables_config)
     # If discover flag was passed, run discovery mode and dump output to stdout
