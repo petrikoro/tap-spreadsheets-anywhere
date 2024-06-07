@@ -18,7 +18,7 @@ def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 def append_env_to_tables(table_spec):
-    config = copy.deepcopy(table_spec)
+    config = table_spec.copy()
     
     config['tables'][0]['path'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATH', config['tables'][0]['path'])
     config['tables'][0]['name'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_NAME', config['tables'][0]['name'])
