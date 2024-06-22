@@ -27,7 +27,7 @@ def append_env_to_tables(table_spec):
     config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN', config['tables'][0]['pattern'])
     config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR', config['tables'][0]['quotechar'])
     config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE', config['tables'][0]['start_date'])
-    config['tables'][0]['key_properties'] = json.loads(os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES') or str(config['tables'][0]['key_properties']) or "[]")
+    config['tables'][0]['key_properties'] = config['tables'][0].get('key_properties') or json.loads(os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES') or "[]")
 
     return config
 
