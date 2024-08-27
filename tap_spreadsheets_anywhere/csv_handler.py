@@ -21,6 +21,13 @@ def generator_wrapper(reader):
             to_return[formatted_key.lower()] = value
         yield to_return
 
+def filter_nul_lines(reader):
+    """Generator that yields lines from the reader, skipping those with NUL."""
+    for line in reader:
+        if '\0' in line:
+            LOGGER.warning("Skipping line with NUL character: %r", line)
+            continue
+        yield line
 
 def get_row_iterator(table_spec, reader):
     field_names = None
@@ -30,11 +37,15 @@ def get_row_iterator(table_spec, reader):
     dialect = 'excel'
     if 'delimiter' not in table_spec or table_spec['delimiter'] == 'detect':
         try:
-            dialect = csv.Sniffer().sniff(reader.readline(), delimiters=[',', '\t', ';', ' ', ':', '|', ' '])
+            # Use filter_nul_lines to wrap the reader for sniffing
+            first_line = reader.readline()
+            if '\0' in first_line:
+                raise ValueError("First line of the file contains NUL character")
+            dialect = csv.Sniffer().sniff(first_line, delimiters=[',', '\t', ';', ' ', ':', '|', ' '])
             if reader.seekable():
                 reader.seek(0)
         except Exception as err:
-            raise ValueError("Unable to sniff a delimiter")
+            raise ValueError("Unable to sniff a delimiter: " + str(err))
     else:
         custom_delimiter = table_spec.get('delimiter', ',')
         custom_quotechar = table_spec.get('quotechar', '"')
@@ -45,5 +56,7 @@ def get_row_iterator(table_spec, reader):
             dialect = 'custom_dialect'
             csv.register_dialect(dialect, custom_dialect)
 
-    reader = csv.DictReader(reader, fieldnames=field_names, dialect=dialect)
+    # Wrap the reader with the NUL-filtering generator
+    filtered_reader = filter_nul_lines(reader)
+    reader = csv.DictReader(filtered_reader, fieldnames=field_names, dialect=dialect)
     return generator_wrapper(reader)
