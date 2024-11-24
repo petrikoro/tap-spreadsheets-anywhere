@@ -27,6 +27,7 @@ def append_env_to_tables(table_spec):
     config['tables'][0]['pattern'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_PATTERN', config['tables'][0]['pattern'])
     config['tables'][0]['quotechar'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_QUOTECHAR', config['tables'][0]['quotechar'])
     config['tables'][0]['start_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_START_DATE', config['tables'][0]['start_date'])
+    config['tables'][0]['end_date'] = os.environ.get('TAP_SPREADSHEET_ANYWHERE_END_DATE', '2100-01-01 00:00:00')
     config['tables'][0]['key_properties'] = config['tables'][0].get('key_properties') or json.loads(os.environ.get('TAP_SPREADSHEET_ANYWHERE_KEY_PROPERTIES') or "[]")
 
     return config
@@ -124,10 +125,16 @@ def sync(config, state, catalog):
             )
             modified_since = dateutil.parser.parse(
                 state.get(stream.tap_stream_id, {}).get('modified_since') or table_spec['start_date'])
+            modified_until = dateutil.parser.parse(
+                table_spec['end_date']
+            )
             target_files = file_utils.get_matching_objects(table_spec, modified_since)
             max_records_per_run = table_spec.get('max_records_per_run', -1)
             records_streamed = 0
             for t_file in target_files:
+                if t_file['last_modified'] > modified_until:
+                    LOGGER.warning(f"File '{t_file.get('key')}' does not meet modified_until condition. Skipping.")
+                    break
                 records_streamed += file_utils.write_file(t_file['key'], table_spec, merged_schema, max_records=max_records_per_run-records_streamed)
                 if 0 < max_records_per_run <= records_streamed:
                     LOGGER.info(f'Processed the per-run limit of {records_streamed} records for stream "{stream.tap_stream_id}". Stopping sync for this stream.')
